@@ -3,17 +3,17 @@ import { JSON } from "assemblyscript-json";
 // Data connector to read the total supply off a contract
 
 // Local Variables
-  var supply: string; 
-  var address: string;       
+  var vaultAddress: string;
+  var positions: string;
 
   // Initializes variables from the config file
   export function initialize(config: string, _timestamp: i32): void {
     // parse through the config and assing locals
     const configJson = <JSON.Obj>JSON.parse(config);
     // Get our config variables
-    const _address = configJson.getString("address");
+    const _address = configJson.getString("vaultAddress");
     if (_address == null) throw new Error('Invalid Config')
-    address = _address._str;
+    vaultAddress = _address._str;
   }
 
 
@@ -23,50 +23,45 @@ import { JSON } from "assemblyscript-json";
     if (response == ''){
       // return payload
       return `{
-"abi" : '[{"constant":true,"inputs":[],"name":"totalSupply","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"}]',
-"address" : ` + address + `,
-"arguments" : '[]',
-"method" : 'totalSupply'
-}`
+        "abi" : [{"inputs":[],"name":"getPositions","outputs":[{"internalType":"int24[]","name":"","type":"int24[]"},{"internalType":"int24[]","name":"","type":"int24[]"},{"internalType":"uint16[]","name":"","type":"uint16[]"}],"stateMutability":"view","type":"function"}],
+        "address" : \"` + vaultAddress + `\",
+        "arguments" : [],
+        "method" : "getPositions"
+      }`
     }
 
-    // Parse through the BN object for the hex
-    const bigNum = <JSON.Obj>JSON.parse(response);
-    const _hex = bigNum.getString("hex")
-    if (_hex == null) throw new Error()
-    supply = _hex._str;
+    // Here we will get the results as ints so we just pass it through
+    // I.e. [ [ 100500 ], [ 100680 ], [ 1 ] ]
+    positions = response;
     return 'true'
   } 
 
   // Here we are performing no transformation, so we ship the hex value back
   export function transform(): string {
-    return `{"data": `+ supply + `}`;
+    // resulting data will be array
+    return `{"data": \"`+ positions + `\"}`;
   }
 
   // An example of what the config object will look like after being created via the configForm
   export function exampleInputConfig(): string {
-    return `{"address" : '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', "isChainRead" : true}`
+    return `{"vaultAddress" : '0x8ad599c3A0ff1De082011EFDDc58f1908eb6e6D8', "isChainRead" : true}`
   }
 
   // Renders the config object in JSON Schema format, which is used
   // by the frontend to display input value options and validate user input.
   export function configForm(): string {
     return `{
-  "title": "Calls ERC-20's 'totalSupply' function",
-  "description": "Input config for reading the total supply of a token",
+  "title": "Gets current positions from UniLiquidityManager Vault",
+  "description": "Input config for reading the slot0 function on a Uniswapv3 pool",
   "type": "object",
   "required": [
-    "address"
+    "isChainRead"
   ],
-  "properties": {
-    "address": {
-      "type": "string",
-      "title": "Contract Address",
-      "description": "Address of the token to be read"
-    },
-    "isChainRead" : true
+    "isChainRead" : {
+      "type": "boolean",
+      "title": "Is this a view or pure contract call?",
+      "default": true
+    }
   }
 }`; 
   }
-
-
