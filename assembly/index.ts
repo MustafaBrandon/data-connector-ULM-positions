@@ -57,6 +57,7 @@ import { JSON } from "assemblyscript-json";
   "required": [
     "isChainRead"
   ],
+  "properties": {
     "isChainRead" : {
       "type": "boolean",
       "title": "Is this a view or pure contract call?",
