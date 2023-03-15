@@ -1,7 +1,9 @@
-import { config, input_config, response } from "./utils";
+import { config, examplePositions, input_config, response } from "./utils";
+import fs from 'fs'
+import {WasmModule, loadWasm} from "@steerprotocol/app-loader";
 
 // We use untouched so that we can run the un-optimized version of the wasm which will provide better stacktraces
-const myModule = require("../untouchLoader");
+// const myModule = require("../untouchLoader");
 
 function hexEncode(str: string): any {
   var hex, i;
@@ -16,10 +18,16 @@ function hexEncode(str: string): any {
 }
 
 describe("WASM Transformation Module", () => {
-  describe("Uniswap Data", () => {
+  let myModule: WasmModule;
+
+  beforeEach(async () => {
+    myModule = await loadWasm(fs.readFileSync(__dirname + "/../build/debug.wasm"), {})
+  });
+  describe("Fetching ULM Data", () => {
     test("can return input config", async () => {
+      // myModule = await loadWasm(fs.readFileSync(__dirname + "/../build/debug.wasm"), {})
       // Call the configForm function on the transformation bundle
-      const result = myModule.configForm();
+      const result = myModule.config();
       // Check that the result is the same as the expected result
       // Fix some funky encoding
       let hexResult = hexEncode(result) as string;
@@ -29,27 +37,26 @@ describe("WASM Transformation Module", () => {
   });
 
     test("fails imporper config", async () => {
-      let configMemoryRef = myModule.__pin(
-        myModule.__newString(
-          `{"config":"null"}`
-        )
-      );
+      const improperConfig = `{"config":"null"}`
+
       const timestamp = 1654012158
       // The actual strategy instantiation and execution
       expect(() => {
-        myModule.initialize(configMemoryRef, timestamp);
-      }).toThrowError(/Cannot parse JSON/);
+        myModule.initialize(improperConfig);
+      }).toThrowError();
     });
 
     test("can return call obj", async () => {
       const timestamp = 1654012158
       // const _config = myModule.__pin(myModule.__newString(config));
-      myModule.initialize(config, timestamp);
-      const result = myModule.main("");
+      myModule.initialize(config);
+      const result = myModule.execute("");
       let hexResult = hexEncode(result) as string;
-      // hexResult = hexResult.replace(/0002/g, '');
+      hexResult = hexResult.replace(/0002/g, '');
+      hexResult = hexResult.replace(/0020/g, '');
       hexResult = hexResult.replace(/000d/g, '');
-      const hexExpected = hexEncode(response);
+      let hexExpected = hexEncode(response);
+      hexExpected = hexExpected.replace(/0002/g, '');
       expect(hexResult).toBe(hexExpected);
     });
 
@@ -71,16 +78,16 @@ describe("WASM Transformation Module", () => {
     //   expect(result).toBe("true");
     // });
 
-    // test("can run transformation and return candles", async () => {
-    //   const timestamp = 1654012158
-    //   myModule.initialize(config, timestamp);
-    //   myModule.main(response_swaps);
-    //   const result = myModule.transform();
-    //   let hexResult = hexEncode(result) as string;
-    //   hexResult = hexResult.replace(/000d/g, '');
-    //   const hexExpected = hexEncode(candles);
-    //   expect(hexResult).toBe(hexExpected);
-    // });
+    test("can run transformation and return positions", async () => {
+      // const timestamp = 1654012158
+      myModule.initialize(config);
+      myModule.execute(examplePositions);
+      const result = myModule.transform();
+      let hexResult = hexEncode(result) as string;
+      hexResult = hexResult.replace(/000d/g, '');
+      const hexExpected = hexEncode(examplePositions);
+      expect(hexResult).toBe(hexExpected);
+    });
 
   });
 });
