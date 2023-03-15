@@ -1,3 +1,16 @@
+## 1.0.0 (2023-03-15)
+
+
+### Features
+
+* :zap: ULM positions as-update ([7a54c13](https://github.com/SteerProtocol/data-connector-ULM-positions/commit/7a54c134293727088b07a7765d6123dcf4656ec2))
+* MVP ([cb07c4a](https://github.com/SteerProtocol/data-connector-ULM-positions/commit/cb07c4a0a27aeb0e5df56bbc6d63e2e3925667eb))
+
+
+### Bug Fixes
+
+* :bug: Properties missing ([4cc18ac](https://github.com/SteerProtocol/data-connector-ULM-positions/commit/4cc18ac3d8b9aef8d00a78efb16a78caeffa4d97))
+
 ## 1.0.0 (2022-08-10)
 
 
