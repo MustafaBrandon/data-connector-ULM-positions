@@ -1,30 +1,37 @@
-import { JSON } from "assemblyscript-json";
+import { JSON } from "json-as/assembly";
+import {  DataConnectorConfig, ExecutionContext  } from "@steerprotocol/strategy-utils/assembly";
 
 // Data connector to read the total supply off a contract
 
 // Local Variables
-  var vaultAddress: string;
-  var positions: string;
+@serializable
+class Config extends DataConnectorConfig{
+  address: string = "";
+}
+
+  var positions: string = "";
+  var address: string = "";
 
   // Initializes variables from the config file
-  export function initialize(config: string, _timestamp: i32): void {
+  export function initialize(config: string): void {
     // parse through the config and assing locals
-    const configJson = <JSON.Obj>JSON.parse(config);
-    // Get our config variables
-    const _address = configJson.getString("vaultAddress");
-    if (_address == null) throw new Error('Invalid Config')
-    vaultAddress = _address._str;
+    const configJson: Config = JSON.parse<Config>(config);
+    if (configJson.address == "" ||
+      configJson.address == null) {
+      throw new Error("Config not properly formatted");
+    }
+    address = configJson.address;
   }
 
 
-  export function main(response: string): string {
+  export function execute(response: string): string {
     
     // Check if respone is first call
     if (response == ''){
       // return payload
       return `{
         "abi" : [{"inputs":[],"name":"getPositions","outputs":[{"internalType":"int24[]","name":"","type":"int24[]"},{"internalType":"int24[]","name":"","type":"int24[]"},{"internalType":"uint16[]","name":"","type":"uint16[]"}],"stateMutability":"view","type":"function"}],
-        "address" : \"` + vaultAddress + `\",
+        "address" : \"` + address + `\",
         "arguments" : [],
         "method" : "getPositions"
       }`
@@ -39,7 +46,7 @@ import { JSON } from "assemblyscript-json";
   // Here we are performing no transformation, so we ship the hex value back
   export function transform(): string {
     // resulting data will be array
-    return `{"data": \"`+ positions + `\"}`;
+    return positions;
   }
 
   // An example of what the config object will look like after being created via the configForm
@@ -49,7 +56,7 @@ import { JSON } from "assemblyscript-json";
 
   // Renders the config object in JSON Schema format, which is used
   // by the frontend to display input value options and validate user input.
-  export function configForm(): string {
+  export function config(): string {
     return `{
   "title": "Gets current positions from UniLiquidityManager Vault",
   "description": "Input config for reading the slot0 function on a Uniswapv3 pool",

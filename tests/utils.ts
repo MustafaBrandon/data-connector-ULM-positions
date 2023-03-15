@@ -1,25 +1,26 @@
 export const input_config = `{
-  "title": "Calls ERC-20's 'totalSupply' function",
-  "description": "Input config for reading the total supply of a token",
+  "title": "Gets current positions from UniLiquidityManager Vault",
+  "description": "Input config for reading the slot0 function on a Uniswapv3 pool",
   "type": "object",
   "required": [
-    "address"
+    "isChainRead"
   ],
   "properties": {
-    "address": {
-      "type": "string",
-      "title": "Contract Address",
-      "description": "Address of the token to be read"
-    },
-    "isChainRead" : true
+    "isChainRead" : {
+      "type": "boolean",
+      "title": "Is this a view or pure contract call?",
+      "default": true
+    }
   }
 }`
+
+export const examplePositions = '[ [ 100500 ], [ 100680 ], [ 1 ] ]';
 
 export const config = '{"address" : "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48","isChainRead" : true }'
 
 export const response = `{
-"abi" : '[{"constant":true,"inputs":[],"name":"totalSupply","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"}]',
-"address" : 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48,
-"arguments" : '[]',
-"method" : 'totalSupply'
+"abi":[{"inputs":[],"name":"getPositions","outputs":[{"internalType":"int24[]","name":"","type":"int24[]"},{"internalType":"int24[]","name":"","type":"int24[]"},{"internalType":"uint16[]","name":"","type":"uint16[]"}],"stateMutability":"view","type":"function"}],
+"address":"0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+"arguments":[],
+"method":"getPositions"
 }`
