@@ -3,11 +3,11 @@ import { JSON } from "json-as/assembly";
 
 // Data connector to read the total supply off a contract
 @serializable
-export class DataConnectorConfig {
+class DataConnectorConfig {
   executionContext: ExecutionContext = new ExecutionContext();
 }
 @serializable
-export class ExecutionContext {
+class ExecutionContext {
   executionTimestamp: number = 0;
   epochLength: number = 0;
   epochTimestamp: i32 = 0;
@@ -27,8 +27,7 @@ class Config extends DataConnectorConfig{
   export function initialize(config: string): void {
     // parse through the config and assing locals
     const configJson: Config = JSON.parse<Config>(config);
-    if (configJson.chainId == null ||
-      configJson.executionContext.vaultAddress == null) {
+    if (configJson.chainId == null) {
       throw new Error("Config not properly formatted");
     }
     vaultAddress = configJson.executionContext.vaultAddress;
