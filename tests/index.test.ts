@@ -46,11 +46,12 @@ describe("WASM Transformation Module", () => {
       }).toThrowError();
     });
 
-    test("can return call obj", async () => {
+    test.only("can return call obj", async () => {
       const timestamp = 1654012158
       // const _config = myModule.__pin(myModule.__newString(config));
       myModule.initialize(config);
       const result = myModule.execute("");
+      console.log(result)
       let hexResult = hexEncode(result) as string;
       hexResult = hexResult.replace(/0002/g, '');
       hexResult = hexResult.replace(/0020/g, '');

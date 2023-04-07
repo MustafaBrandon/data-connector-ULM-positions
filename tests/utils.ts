@@ -16,7 +16,7 @@ export const input_config = `{
 
 export const examplePositions = '[ [ 100500 ], [ 100680 ], [ 1 ] ]';
 
-export const config = '{"address" : "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48","isChainRead" : true }'
+export const config = '{"address" : "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48","isChainRead" : true, "chainId": "37" }'
 
 export const response = `{
 "abi":[{"inputs":[],"name":"getPositions","outputs":[{"internalType":"int24[]","name":"","type":"int24[]"},{"internalType":"int24[]","name":"","type":"int24[]"},{"internalType":"uint16[]","name":"","type":"uint16[]"}],"stateMutability":"view","type":"function"}],
