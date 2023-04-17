@@ -1,18 +1,8 @@
 import { JSON } from "json-as/assembly";
-// import {  DataConnectorConfig, ExecutionContext  } from "@steerprotocol/strategy-utils/assembly";
+import {  DataConnectorConfig, ExecutionContext  } from "@steerprotocol/strategy-utils/assembly";
 
 // Data connector to read the total supply off a contract
-@serializable
-class DataConnectorConfig {
-  executionContext: ExecutionContext = new ExecutionContext();
-}
-@serializable
-class ExecutionContext {
-  executionTimestamp: number = 0;
-  epochLength: number = 0;
-  epochTimestamp: i32 = 0;
-  vaultAddress: string = "";
-}
+
 // Local Variables
 @serializable
 class Config extends DataConnectorConfig{
