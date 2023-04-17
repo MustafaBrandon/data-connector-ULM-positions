@@ -6,21 +6,22 @@ import {  DataConnectorConfig, ExecutionContext  } from "@steerprotocol/strategy
 // Local Variables
 @serializable
 class Config extends DataConnectorConfig{
-  address: string = "";
+  chainId: string = "";
 }
 
   var positions: string = "";
-  var address: string = "";
+  var vaultAddress: string = "";
+  var chainId: string = "";
 
   // Initializes variables from the config file
   export function initialize(config: string): void {
     // parse through the config and assing locals
     const configJson: Config = JSON.parse<Config>(config);
-    if (configJson.address == "" ||
-      configJson.address == null) {
+    if (configJson.chainId == null) {
       throw new Error("Config not properly formatted");
     }
-    address = configJson.address;
+    vaultAddress = configJson.executionContext.vaultAddress;
+    chainId = configJson.chainId;
   }
 
 
@@ -31,9 +32,10 @@ class Config extends DataConnectorConfig{
       // return payload
       return `{
         "abi" : [{"inputs":[],"name":"getPositions","outputs":[{"internalType":"int24[]","name":"","type":"int24[]"},{"internalType":"int24[]","name":"","type":"int24[]"},{"internalType":"uint16[]","name":"","type":"uint16[]"}],"stateMutability":"view","type":"function"}],
-        "address" : \"` + address + `\",
+        "address" : \"` + vaultAddress + `\",
         "arguments" : [],
-        "method" : "getPositions"
+        "method" : "getPositions",
+        "chainId" : ` + chainId + `
       }`
     }
 
@@ -47,11 +49,6 @@ class Config extends DataConnectorConfig{
   export function transform(): string {
     // resulting data will be array
     return positions;
-  }
-
-  // An example of what the config object will look like after being created via the configForm
-  export function exampleInputConfig(): string {
-    return `{"vaultAddress" : '0x8ad599c3A0ff1De082011EFDDc58f1908eb6e6D8', "isChainRead" : true}`
   }
 
   // Renders the config object in JSON Schema format, which is used
@@ -68,7 +65,13 @@ class Config extends DataConnectorConfig{
     "isChainRead" : {
       "type": "boolean",
       "title": "Is this a view or pure contract call?",
-      "default": true
+      "default": true,
+      "hidden" : true
+    },
+    "chainId": {
+      "type": "string",
+      "title": "Chain ID",
+      "description": "Chain from which to call view function (i.e. Ethereum Mainnet would be '1' and Polygon Mainnet is '137', check the documentation for the full list of supported chains)"
     }
   }
 }`; 
