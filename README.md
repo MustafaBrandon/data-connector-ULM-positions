@@ -11,7 +11,7 @@ i.e. "[ [], [], [] ]"
 ## Parameters
 
 - isChainRead: boolean set to true to signal this data connector fetches on-chain data.
-- Chain ID: Chain ID of where the vault this connector will read is deployed to.
+- Chain ID: Add the chainId of the deployed vault from which the current data connector will read.
 
 No other parameters are needed as the vault's address is injected into the config and used in forming the request.
 
