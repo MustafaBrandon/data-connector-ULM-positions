@@ -1,5 +1,5 @@
 import { JSON } from "json-as/assembly";
-import {  DataConnectorConfig  } from "@steerprotocol/strategy-utils/assembly";
+import {  DataConnectorConfig, ExecutionContext  } from "@steerprotocol/strategy-utils/assembly";
 
 // Data connector to read the total supply off a contract
 
